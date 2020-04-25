@@ -1,0 +1,10 @@
+name: CommandBlockSleepCmd
+version: @version@
+main: switorik.commandblocksleepcmd.Main
+api-version: 1.13
+authors: [Switorik]
+description: This adds a delay functionality to command blocks via the sleep command.
+commands:
+  sleep:
+    usage: /sleep
+    permission: sleep.use
