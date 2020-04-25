@@ -1,6 +1,6 @@
 This plugin adds a delay functionality to command blocks via the sleep command.
 
-Correct usage is /sleep x y z Time BLOCK BLOCK
+Correct usage is /cmdblockdelay x y z Time BLOCK BLOCK
 
 Coordinates x y and z can be coordinates or relative coordinates using ` symbol. I tried using ~ but command blocks do not like non vanilla commands using ~
 If you want 0 as a reference, use `0 instead of `

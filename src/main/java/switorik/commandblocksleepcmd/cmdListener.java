@@ -1,6 +1,5 @@
 package switorik.commandblocksleepcmd;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,12 +17,12 @@ public class cmdListener implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (command.getName().equalsIgnoreCase("sleep")) {
+        if (command.getName().equalsIgnoreCase("cmdblockdelay")) {
 
             if (sender instanceof BlockCommandSender) {
 
                 if (args.length >= 5) {
-                    //format will be /sleep x y z time setblock replacementblock:optional
+                    //format will be /cmdblockdelay x y z time setblock replacementblock:optional
 
                     while (true) {
 
@@ -137,7 +136,7 @@ public class cmdListener implements CommandExecutor {
 
                 if (sender instanceof Player) {
 
-                    if (sender.hasPermission("sleep.use")) {
+                    if (sender.hasPermission("cmdblockdelay.use")) {
 
                         sender.sendMessage(message.getString("info"));
 

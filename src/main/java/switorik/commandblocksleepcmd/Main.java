@@ -14,7 +14,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
-        this.getCommand("sleep").setExecutor(new cmdListener());
+        this.getCommand("cmdblockdelay").setExecutor(new cmdListener());
         getServer().getLogger().info("Adding command block delay functionality to the server.");
 
         File messagesyml = new File(plugin.getDataFolder() + File.separator + "messages.yml");
