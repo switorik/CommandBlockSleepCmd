@@ -1,14 +1,13 @@
-This plugin adds a delay functionality to command blocks via the sleep command.
+This plugin adds a delay functionality to command blocks via the cmdblockdelay command.
 
-Correct usage is /cmdblockdelay x y z Time BLOCK BLOCK
+Correct usage is /cmdblockdelay x y z time block block time
 
-Coordinates x y and z can be coordinates or relative coordinates using ` symbol. I tried using ~ but command blocks do not like non vanilla commands using ~
-If you want 0 as a reference, use `0 instead of `
+Coordinates x y and z can be coordinates or relative coordinates using ~ symbol. For a reference of 0, you must use ~0
 
-Time is in Milliseconds. Example: If you want seconds, multiple by 1000. 5 seconds * 1000 = 5000 MS
+Time is in server ticks. Example: If you want seconds, multiple by 20. 5 seconds * 20 = 100 Ticks
 
-The fist block is what you want to set after the time has been reached.
+The fist block is what you want to set after the first time has been reached.
 
 The second block is entirely optional and replaces the first block one game tick afterwards.
-I find that useful if you want to set a redstone block to pulse to activate another command block.
+The second time is optional if you want to change the amount of time before it changes the second block.
 

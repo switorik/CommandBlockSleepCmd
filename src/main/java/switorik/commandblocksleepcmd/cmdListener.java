@@ -11,206 +11,108 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 public class cmdListener implements CommandExecutor {
 
     Main plugin = Main.plugin;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof BlockCommandSender) {
 
-        if (command.getName().equalsIgnoreCase("cmdblockdelay")) {
+            YamlConfiguration message = Main.message;
 
-            if (sender instanceof BlockCommandSender) {
-
-                if (args.length >= 5) {
-                    //format will be /cmdblockdelay x y z time setblock replacementblock:optional replacementtime:optional
-
-                    while (true) {
-
-                        int x = 0;
-                        int y = 0;
-                        int z = 0;
-                        int time = 0;
-//                        int replaceTime = 0;
-                        Material material = Material.AIR;
-//                        Material replacement = Material.AIR;
-                        Block block = ((BlockCommandSender) sender).getBlock();
-                        Location commandLoc = block.getLocation();
-                        Location setBlock = new Location(block.getWorld(), x, y, z);
-                        //setting up initial variables
-
-                        //parse X
-                        if (isInteger(args[0])) {
-                            x = Integer.parseInt(args[0]);
-                        } else {
-                            if (args[0].contains("`")) {
-                                if (isInteger(args[0].split("`")[1])) {
-                                    x = commandLoc.getBlockX() + Integer.parseInt(args[0].split("`")[1]);
-                                } else {
-                                    break;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        //parse Y
-                        if (isInteger(args[1])) {
-                            y = Integer.parseInt(args[1]);
-                        } else {
-                            if (args[1].contains("`")) {
-                                if (isInteger(args[1].split("`")[1])) {
-                                    y = commandLoc.getBlockY() + Integer.parseInt(args[1].split("`")[1]);
-                                } else {
-                                    break;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        //parse Z
-                        if (isInteger(args[2])) {
-                            z = Integer.parseInt(args[2]);
-                        } else {
-                            if (args[2].contains("`")) {
-                                if (isInteger(args[2].split("`")[1])) {
-                                    z = commandLoc.getBlockZ() + Integer.parseInt(args[2].split("`")[1]);
-                                } else {
-                                    break;
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-
-                        //parse Time
-                        if (isInteger(args[3])) {
-                            time = Integer.parseInt(args[3]);
-                            if (time < 0) {
-                                break;
-                            }
-                        } else {
-                            break;
-                        }
-
-                        //check if it has a replacement time and parse it
-//                        if (!args[6].isEmpty() ) {
-//                            if (isInteger(args[6])) {
-//                                if (Integer.parseInt(args[6]) > time) {
-//                                    replaceTime = Integer.parseInt(args[6]);
-//                                } else {
-//                                    replaceTime = time + 1;
-//                                }
-//                            } else {
-//                                replaceTime = time + 1;
-//                            }
-//                        } else {
-//                            replaceTime = time + 1;
-//                        }
-                        //sender.sendMessage(replaceTime + "");
-                        //make sure we have a material to set
-                        if (!isMaterial(args[4])) {
-                            break;
-                        }
-                        //storing block location
-                        setBlock.setX(x);
-                        setBlock.setY(y);
-                        setBlock.setZ(z);
-
-                        //convert MS to S
-                        time = time / 1000;
-
-                        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                            public void run() {
-
-                                setBlock.getBlock().setType(Material.getMaterial(args[4]));
-
-                            }
-
-                        }, time * 20);
-
-                        if (!args[5].isEmpty()) {
-
-                            if (isMaterial(args[5])) {
-
-                               //plugin.getServer().getLogger().info("Replace Time:" + replaceTime);
-
-                                //replaceTime = replaceTime / 1000;
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                    public void run() {
-
-                                        setBlock.getBlock().setType(Material.getMaterial(args[5]));
-
-                                    }
-
-                                }, time * 20);
-
-                            } else {
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-
-                }
-
-            } else {
-
-                YamlConfiguration message = Main.message;
-
-                if (sender instanceof Player) {
-
-                    if (sender.hasPermission("cmdblockdelay.use")) {
-
-                        sender.sendMessage(message.getString("info"));
-
-                    } else {
-
-                        sender.sendMessage(message.getString("noperm"));
-
-                    }
-
-                } else {
-
-                    sender.sendMessage(message.getString("ingame"));
-
-                }
-
+            //Exits if given invalid parameters.
+            if (args.length < 5) return false;
+            if (!isInteger(args[0]) && !isInteger(args[0].replace("~", ""))) {
+                sender.sendMessage(Objects.requireNonNull(message.getString("badint")));
+                return true;
+            }
+            if (!isInteger(args[1]) && !isInteger(args[1].replace("~", ""))){
+                sender.sendMessage(Objects.requireNonNull(message.getString("badint")));
+                return true;
+            }
+            if (!isInteger(args[2]) && !isInteger(args[2].replace("~", ""))){
+                sender.sendMessage(Objects.requireNonNull(message.getString("badint")));
+                return true;
+            }
+            if (!isInteger(args[3])){
+                sender.sendMessage(Objects.requireNonNull(message.getString("badtime")));
+                return true;
+            }
+            if (!isMaterial(args[4].toUpperCase())){
+                sender.sendMessage(Objects.requireNonNull(message.getString("badmaterial")));
+                return true;
             }
 
-        }
+            int x;
+            int y;
+            int z;
+            int time = Integer.parseInt(args[3]);
+            if (time < 0) return false;
 
+            Block block = ((BlockCommandSender) sender).getBlock();
+            Location commandLoc = block.getLocation();
+
+            //Set coordinates
+            if (args[0].startsWith("~")) x = commandLoc.getBlockX() + Integer.parseInt(args[0].replace("~", ""));
+            else x = Integer.parseInt(args[0]);
+            if (args[1].startsWith("~")) y = commandLoc.getBlockY() + Integer.parseInt(args[1].replace("~", ""));
+            else y = Integer.parseInt(args[1]);
+            if (args[2].startsWith("~")) z = commandLoc.getBlockZ() + Integer.parseInt(args[2].replace("~", ""));
+            else z = Integer.parseInt(args[2]);
+
+            Location setBlock = new Location(block.getWorld(), x, y, z);
+
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(
+                    plugin, () -> setBlock.getBlock().setType(Objects.requireNonNull(Material.getMaterial(args[4].toUpperCase()))), time);
+
+            switch (args.length) {
+                case 6:
+                    if (!isMaterial(args[5].toUpperCase())) return false;
+                    //since optional: no error message because it will fire if this fails.
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(
+                            plugin, () -> setBlock.getBlock().setType(Objects.requireNonNull(Material.getMaterial(args[5].toUpperCase()))), time);
+                    return true;
+                case 7:
+                    if (!isMaterial(args[5].toUpperCase())) return false;
+                    if (!isInteger(args[6])) return false;
+                    //since optional: no error message because it will fire if this fails.
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(
+                            plugin, () -> setBlock.getBlock().setType(Objects.requireNonNull(Material.getMaterial(args[5].toUpperCase()))), Integer.parseInt(args[6]));
+                    return true;
+            }
+        } else {
+            YamlConfiguration message = Main.message;
+                if (sender instanceof Player) {
+                    if (sender.hasPermission("cmdblockdelay.use")) {
+                        sender.sendMessage(Objects.requireNonNull(message.getString("info")));
+                    } else sender.sendMessage(Objects.requireNonNull(message.getString("noperm")));
+                } else sender.sendMessage(Objects.requireNonNull(message.getString("ingame")));
+        }
         return true;
     }
 
-    public Boolean isInteger(String num) {
-
-        Boolean isInt;
+    private Boolean isInteger(String num) {
         try {
             Integer.parseInt(num);
-            isInt = true;
+            return true;
         } catch (Exception e) {
-            isInt = false;
+            return false;
         }
-
-        return isInt;
     }
 
-    public Boolean isMaterial(String mat) {
-
-        Boolean isMat;
+    private Boolean isMaterial(String mat) {
         try {
-            Material.getMaterial(mat);
-            isMat = true;
+            if(Material.getMaterial(mat) != null) return true;
+            else
+            return false;
+
         } catch (Exception e) {
-            isMat = false;
+            return false;
         }
-
-        return isMat;
     }
-
 }
 
 
